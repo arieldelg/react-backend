@@ -6,6 +6,7 @@ import { Response, Request } from "express";
 import { client } from "../db/mongoDB";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcryptjs";
+import { generateJWT } from "../helpers/jwt";
 
 interface UserCredentials {
   name?: string;
@@ -45,13 +46,20 @@ const createNewUser = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
+    //! creation of json web token
+    const token = await generateJWT(
+      result.insertedId as unknown as string,
+      name as string
+    );
+
     console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
-    // * if no error throw, return a 201 status that user have been created
+    // * if no error throw, return a 201 status that user have been created and sending token
     return res.status(201).json({
       ok: true,
       message: "register",
       user: result,
+      token,
     });
   } catch (error) {
     // * returning an error if something went wrong
@@ -63,12 +71,16 @@ const createNewUser = async (req: Request, res: Response) => {
 };
 
 const loginUser = async (req: Request, res: Response) => {
+  //* destructuring email and password from request body
   const { email, password } = req.body as UserCredentials;
 
   try {
+    // * connecting to mongoDB client - db - collection
     const connect = client as MongoClient;
     const database = connect.db("authCalendar");
     const collection = database.collection("users");
+
+    // ! checking if email dosent exist, if not , return error response else continue
 
     const noEmailExist = await collection.countDocuments({ email: email });
 
@@ -79,10 +91,12 @@ const loginUser = async (req: Request, res: Response) => {
           "Invalid Credentials, please try again o contact with admin area",
       });
 
+    // * if email exist get all the info that has the same email
     const user = (await collection.findOne({
       email: email,
     })) as unknown as MongoUser;
 
+    // ! validate password of the email that match if doesnt match return an error
     const validCredentials = bcrypt.compareSync(password, user.password);
 
     if (!validCredentials)
@@ -92,26 +106,24 @@ const loginUser = async (req: Request, res: Response) => {
           "Invalid Credentials, please try again o contact with admin area",
       });
 
+    //! creation of json web token
+    const token = await generateJWT(user._id, user.name as string);
+
+    // * if everythinh goes ok return an status 200
     return res.status(200).json({
       ok: true,
       message: "status ok",
       data: user,
+      token,
     });
   } catch (error) {
+    // * returning an error if something went wrong
+
     return res.status(500).json({
       ok: false,
       message: "Please contact to rhe admin area",
     });
   }
-
-  return res.status(202).json({
-    ok: true,
-    message: "login",
-    user: {
-      email,
-      password,
-    },
-  });
 };
 
 const revalidToken = (_: Request, res: Response) => {
