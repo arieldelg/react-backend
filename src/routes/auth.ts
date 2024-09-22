@@ -6,11 +6,13 @@
 import express from "express";
 import { createNewUser, loginUser, revalidToken } from "../controllers/auth";
 import { check } from "express-validator";
+import validateFields from "../middleware/validateFields";
 const routerAuth = express.Router();
 
 routerAuth.post(
   "/new",
   [
+    // middlewares
     check("name", "name is required").notEmpty(),
     check("name", "name has to be a least 6 characters").isLength({ min: 5 }),
     check("email", "email is required").isEmail(),
@@ -18,6 +20,7 @@ routerAuth.post(
     check("password", "password has to be a least 6 characters").isLength({
       min: 6,
     }),
+    validateFields,
   ],
   createNewUser
 );
@@ -30,6 +33,7 @@ routerAuth.post(
     check("password", "password has to be a least 6 characters").isLength({
       min: 6,
     }),
+    validateFields,
   ],
   loginUser
 );

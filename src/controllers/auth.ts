@@ -10,14 +10,6 @@ interface UserCredentials {
 const createNewUser = (req: Request, res: Response) => {
   const { email, name, password } = req.body as UserCredentials;
 
-  // manejo de errores
-  const errors = validationResult(req);
-  if (!errors.isEmpty())
-    return res.status(400).json({
-      ok: false,
-      errorMessage: errors.mapped(),
-    });
-
   return res.status(201).json({
     ok: true,
     message: "register",
@@ -31,14 +23,6 @@ const createNewUser = (req: Request, res: Response) => {
 
 const loginUser = (req: Request, res: Response) => {
   const { email, password } = req.body as UserCredentials;
-
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty())
-    return res.status(400).json({
-      ok: false,
-      errorMessage: errors.mapped(),
-    });
 
   res.status(202).json({
     ok: true,
