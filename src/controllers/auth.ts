@@ -1,7 +1,8 @@
 import { Response, Request } from "express";
+import { validationResult } from "express-validator";
 
 interface UserCredentials {
-  name: string;
+  name?: string;
   email: string;
   password: string;
 }
@@ -9,13 +10,15 @@ interface UserCredentials {
 const createNewUser = (req: Request, res: Response) => {
   const { email, name, password } = req.body as UserCredentials;
 
-  if (name.length < 4)
+  // manejo de errores
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
     return res.status(400).json({
       ok: false,
-      message: "name has to be a least 4 characters",
+      errorMessage: errors.mapped(),
     });
 
-  return res.json({
+  return res.status(201).json({
     ok: true,
     message: "register",
     user: {
@@ -26,10 +29,24 @@ const createNewUser = (req: Request, res: Response) => {
   });
 };
 
-const loginUser = (_: Request, res: Response) => {
-  res.json({
+const loginUser = (req: Request, res: Response) => {
+  const { email, password } = req.body as UserCredentials;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty())
+    return res.status(400).json({
+      ok: false,
+      errorMessage: errors.mapped(),
+    });
+
+  res.status(202).json({
     ok: true,
     message: "login",
+    user: {
+      email,
+      password,
+    },
   });
 };
 
