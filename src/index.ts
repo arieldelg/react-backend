@@ -3,6 +3,7 @@ import cors from "cors";
 // para selecionar variables de entorno
 import dotenv from "dotenv";
 import routerAuth from "./routes/auth";
+import { run } from "./db/mongoDB";
 dotenv.config();
 
 const app = express();
@@ -12,12 +13,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+//Database
+run();
+
 //Directorio Publico
-
 app.use(express.static("src/public"));
-
-// lectura y parseo de body
-// app.use(express.json());
 
 //Rutas
 app.use("/api/auth", routerAuth);
