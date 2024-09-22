@@ -16,9 +16,13 @@ app.use(cors());
 
 app.use(express.static("src/public"));
 
+// lectura y parseo de body
+// app.use(express.json());
+
 //Rutas
 app.use("/api/auth", routerAuth);
 
+//listening Port
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
   console.log("hola");
