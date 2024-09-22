@@ -9,7 +9,7 @@ const validateFields = (req: Request, res: Response, next: () => void) => {
       errorMessage: errors.mapped(),
     });
 
-  next();
+  return next();
 };
 
 export default validateFields;

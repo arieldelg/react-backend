@@ -3,9 +3,9 @@
  * ! important comment
  */
 import { Response, Request } from "express";
-import { validationResult } from "express-validator";
 import { client } from "../db/mongoDB";
 import { MongoClient } from "mongodb";
+import bcrypt from "bcryptjs";
 
 interface UserCredentials {
   name?: string;
@@ -24,13 +24,17 @@ const createNewUser = async (req: Request, res: Response) => {
 
     // ! checking if email already exist, if exist , return error response else continue
     const isUnique = await user.countDocuments({ email: email });
-    if (isUnique > 0) throw new Error("Please contact with admin area");
+    if (isUnique > 0) throw new Error("User already exist, please Login");
+
+    // ! encypt of password
+    const salt = bcrypt.genSaltSync();
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
     // * if everything ok add new document to collection
     const result = await user.insertOne({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     console.log(`A document was inserted with the _id: ${result.insertedId}`);
@@ -44,7 +48,7 @@ const createNewUser = async (req: Request, res: Response) => {
   } catch (error) {
     // * destructuring message from errrors, note that is a custom message and return a 500 status
     const { message } = error as { message: string };
-    return res.status(500).json({
+    return res.status(400).json({
       ok: false,
       message: message,
     });
