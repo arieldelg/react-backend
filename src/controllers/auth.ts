@@ -13,6 +13,10 @@ interface UserCredentials {
   password: string;
 }
 
+interface MongoUser extends UserCredentials {
+  _id: string;
+}
+
 const createNewUser = async (req: Request, res: Response) => {
   const { email, name, password } = req.body as UserCredentials;
 
@@ -24,7 +28,11 @@ const createNewUser = async (req: Request, res: Response) => {
 
     // ! checking if email already exist, if exist , return error response else continue
     const isUnique = await user.countDocuments({ email: email });
-    if (isUnique > 0) throw new Error("User already exist, please Login");
+    if (isUnique > 0)
+      return res.status(400).json({
+        ok: false,
+        message: "User already exist, Please Login",
+      });
 
     // ! encypt of password
     const salt = bcrypt.genSaltSync();
@@ -46,19 +54,57 @@ const createNewUser = async (req: Request, res: Response) => {
       user: result,
     });
   } catch (error) {
-    // * destructuring message from errrors, note that is a custom message and return a 500 status
-    const { message } = error as { message: string };
-    return res.status(400).json({
+    // * returning an error if something went wrong
+    return res.status(500).json({
       ok: false,
-      message: message,
+      message: "Please contact to the admin area",
     });
   }
 };
 
-const loginUser = (req: Request, res: Response) => {
+const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body as UserCredentials;
 
-  res.status(202).json({
+  try {
+    const connect = client as MongoClient;
+    const database = connect.db("authCalendar");
+    const collection = database.collection("users");
+
+    const noEmailExist = await collection.countDocuments({ email: email });
+
+    if (noEmailExist === 0)
+      return res.status(400).json({
+        ok: false,
+        message:
+          "Invalid Credentials, please try again o contact with admin area",
+      });
+
+    const user = (await collection.findOne({
+      email: email,
+    })) as unknown as MongoUser;
+
+    const validCredentials = bcrypt.compareSync(password, user.password);
+
+    if (!validCredentials)
+      return res.status(400).json({
+        ok: false,
+        message:
+          "Invalid Credentials, please try again o contact with admin area",
+      });
+
+    return res.status(200).json({
+      ok: true,
+      message: "status ok",
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "Please contact to rhe admin area",
+    });
+  }
+
+  return res.status(202).json({
     ok: true,
     message: "login",
     user: {
