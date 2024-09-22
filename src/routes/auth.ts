@@ -4,12 +4,13 @@
  */
 
 import express from "express";
+import { createNewUser, loginUser, revalidToken } from "../controllers/auth";
 const routerAuth = express.Router();
 
-routerAuth.get("/", (req, res) => {
-  res.json({
-    ok: false,
-  });
-});
+routerAuth.post("/new", createNewUser);
+
+routerAuth.post("/", loginUser);
+
+routerAuth.get("/renew", revalidToken);
 
 export default routerAuth;
