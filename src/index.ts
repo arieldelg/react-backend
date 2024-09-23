@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import routerAuth from "./routes/auth";
 import { run } from "./db/mongoDB";
+import routerEvent from "./routes/events";
 dotenv.config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.static("src/public"));
 
 //Rutas
 app.use("/api/auth", routerAuth);
+app.use("/api/calendarEvents", routerEvent);
 
 //listening Port
 app.listen(PORT, () => {
