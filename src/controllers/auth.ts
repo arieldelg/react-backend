@@ -121,16 +121,27 @@ const loginUser = async (req: Request, res: Response) => {
 
     return res.status(500).json({
       ok: false,
-      message: "Please contact to rhe admin area",
+      message: "Please contact to the admin area",
     });
   }
 };
 
-const revalidToken = (_: Request, res: Response) => {
-  res.json({
-    ok: true,
-    message: "revalidateToken",
-  });
+const revalidToken = async (req: Request, res: Response) => {
+  const { _id, name } = req.body as { _id: string; name: string };
+
+  try {
+    const token = await generateJWT(_id, name);
+    return res.json({
+      ok: true,
+      message: "revalidateToken",
+      token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "Please contact to the admin area",
+    });
+  }
 };
 
 export { createNewUser, loginUser, revalidToken };

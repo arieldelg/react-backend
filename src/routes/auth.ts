@@ -7,6 +7,7 @@ import express from "express";
 import { createNewUser, loginUser, revalidToken } from "../controllers/auth";
 import { check } from "express-validator";
 import validateFields from "../middleware/validateFields";
+import validateJWT from "../middleware/validateJWT";
 const routerAuth = express.Router();
 
 routerAuth.post(
@@ -37,6 +38,6 @@ routerAuth.post(
   loginUser
 );
 
-routerAuth.get("/renew", revalidToken);
+routerAuth.get("/renew", validateJWT, revalidToken);
 
 export default routerAuth;
