@@ -6,19 +6,29 @@ interface NewNote {
   _uid: string;
   title: string;
   text: string;
-  createdAt: string;
-  updatedAt: string;
-  startDate: string;
-  endDate: string;
+  createdAt: Date;
+  updatedAt: Date;
+  startDate: Date;
+  endDate: Date;
 }
 
 const getAllEvents = async (req: Request, res: Response) => {
-  const { _uid } = req.body as { _uid: string; name: string };
+  const { _uid, name } = req.body as { _uid: string; name: string };
+
+  if (!_uid)
+    return res.status(401).json({
+      ok: false,
+      message: "Invalid credentials",
+    });
 
   try {
     const note = connectMongo("calendar", "notes");
     const result = await note.find({ _uid }).toArray();
-    // const note = await collection.find({ _uid }).toArray();
+
+    result.map((element) => {
+      element.name = name;
+      return element;
+    });
 
     return res.status(200).json({
       ok: true,
@@ -41,31 +51,28 @@ const createNewEvent = async (req: Request, res: Response) => {
     text,
     title,
     creation: {
-      createdAt,
-      updatedAt,
+      createdAt: new Date(createdAt),
+      updatedAt: new Date(updatedAt),
     },
     timeNote: {
-      startDate,
-      endDate,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
     },
   };
+
   if (!_uid)
     return res.status(401).json({
       ok: false,
       message: "Invalid Credentials when creating event",
     });
-
   try {
     const note = connectMongo("calendar", "notes");
-
     const result = await note.insertOne(data);
-
     if (!result.insertedId)
       return res.status(500).json({
         ok: false,
         message: "Note not inserted succesfully",
       });
-
     return res.status(200).json({
       ok: true,
       message: "Note inserted succesfully",
