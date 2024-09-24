@@ -1,3 +1,6 @@
+/**
+ * !Important messafe
+ */
 import express from "express";
 import {
   createNewEvent,
@@ -9,12 +12,15 @@ import validateJWT from "../middleware/validateJWT";
 
 const routerEvent = express.Router();
 
-routerEvent.get("/", validateJWT, getAllEvents);
+//!middleware obligatorio para todas las rutas, como esta primero primero se ejecuta este
+routerEvent.use(validateJWT);
 
-routerEvent.post("/new", validateJWT, createNewEvent);
+routerEvent.get("/", getAllEvents);
 
-routerEvent.put("/update/:id", validateJWT, updateNote);
+routerEvent.post("/new", createNewEvent);
 
-routerEvent.delete("/delete/:id", validateJWT, deleteNote);
+routerEvent.put("/update/:id", updateNote);
+
+routerEvent.delete("/delete/:id", deleteNote);
 
 export default routerEvent;
