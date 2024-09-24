@@ -104,6 +104,7 @@ const updateNote = async (req: Request, res: Response) => {
   try {
     const updateNote = connectMongo("calendar", "notes");
     const filter = { _id: new ObjectId(id), _uid };
+
     const updateDoc = {
       $set: {
         ...data,
@@ -113,7 +114,7 @@ const updateNote = async (req: Request, res: Response) => {
     if (result.matchedCount === 0)
       return res.status(500).json({
         ok: false,
-        message: "Error Updating Note",
+        message: "Error Updating Note / who the f***k are you?",
         result,
       });
     return res.status(200).json({
@@ -143,6 +144,7 @@ const deleteNote = async (req: Request, res: Response) => {
 
     const query = {
       _id: new ObjectId(id),
+      _uid,
     };
     const result = await startDelete.deleteOne(query);
 
