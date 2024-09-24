@@ -83,14 +83,14 @@ const createNewEvent = async (req: Request, res: Response) => {
 };
 
 const updateNote = async (req: Request, res: Response) => {
-  const { _uid, _id, ...data } = req.body as {
+  const { _uid, ...data } = req.body as {
     _uid: string;
-    _id: string;
     data: unknown;
   };
-  console.log({ _uid, _id });
-  console.log({ ...data });
-  if (!_uid || !_id)
+
+  const { id } = req.params;
+
+  if (!_uid || !id)
     return res.status(401).json({
       ok: false,
       message: "Invalid Credentials when creating event",
@@ -98,7 +98,7 @@ const updateNote = async (req: Request, res: Response) => {
 
   try {
     const updateNote = connectMongo("calendar", "notes");
-    const filter = { _id: new ObjectId(_id), _uid };
+    const filter = { _id: new ObjectId(id), _uid };
     const updateDoc = {
       $set: {
         ...data,
@@ -124,4 +124,40 @@ const updateNote = async (req: Request, res: Response) => {
   }
 };
 
-export { createNewEvent, getAllEvents, updateNote };
+const deleteNote = async (req: Request, res: Response) => {
+  const { _uid } = req.body;
+  const { id } = req.params;
+
+  if (!_uid)
+    return res.status(401).json({
+      ok: false,
+      message: "Credentials Error",
+    });
+  try {
+    const startDelete = connectMongo("calendar", "notes");
+
+    const query = {
+      _id: new ObjectId(id),
+    };
+    const result = await startDelete.deleteOne(query);
+
+    if (result.deletedCount === 0)
+      return res.status(400).json({
+        ok: false,
+        message: "Bad request / delete Note",
+      });
+
+    return res.status(200).json({
+      ok: true,
+      message: "Note deleted",
+      result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "Please contact the admin area / deleteNote",
+    });
+  }
+};
+
+export { createNewEvent, getAllEvents, updateNote, deleteNote };

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createNewEvent,
+  deleteNote,
   getAllEvents,
   updateNote,
 } from "../controllers/events";
@@ -11,6 +12,8 @@ routerEvent.get("/", getAllEvents);
 
 routerEvent.post("/new", createNewEvent);
 
-routerEvent.put("/update", updateNote);
+routerEvent.put("/update/:id", updateNote);
+
+routerEvent.delete("/delete/:id", deleteNote);
 
 export default routerEvent;
