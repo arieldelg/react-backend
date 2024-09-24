@@ -19,7 +19,8 @@ const validateJWT = (req: Request, res: Response, next: () => void) => {
     };
 
     req.body = {
-      _id: uid,
+      ...req.body,
+      _uid: uid,
       name,
     };
   } catch (error) {

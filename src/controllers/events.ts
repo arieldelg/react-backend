@@ -1,6 +1,5 @@
 import { Response, Request } from "express";
-import { client } from "../db/mongoDB";
-import { MongoClient, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { connectMongo } from "../helpers/connectMongo";
 
 interface NewNote {
@@ -14,18 +13,17 @@ interface NewNote {
 }
 
 const getAllEvents = async (req: Request, res: Response) => {
-  const { _uid } = req.body as { _uid: string };
-  try {
-    const connect = client as MongoClient;
-    const database = connect.db("calendar");
-    const collection = database.collection("notes");
+  const { _uid } = req.body as { _uid: string; name: string };
 
-    const note = await collection.find({ _uid }).toArray();
+  try {
+    const note = connectMongo("calendar", "notes");
+    const result = await note.find({ _uid }).toArray();
+    // const note = await collection.find({ _uid }).toArray();
 
     return res.status(200).json({
       ok: true,
       message: "Status ok",
-      data: note,
+      data: result,
     });
   } catch (error) {
     return res.status(500).json({
@@ -38,7 +36,6 @@ const getAllEvents = async (req: Request, res: Response) => {
 const createNewEvent = async (req: Request, res: Response) => {
   const { _uid, text, title, createdAt, updatedAt, startDate, endDate } =
     req.body as NewNote;
-
   const data = {
     _uid,
     text,
@@ -83,9 +80,10 @@ const createNewEvent = async (req: Request, res: Response) => {
 };
 
 const updateNote = async (req: Request, res: Response) => {
-  const { _uid, ...data } = req.body as {
+  const { _uid, name, ...data } = req.body as {
     _uid: string;
     data: unknown;
+    name: string;
   };
 
   const { id } = req.params;

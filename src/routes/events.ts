@@ -5,15 +5,16 @@ import {
   getAllEvents,
   updateNote,
 } from "../controllers/events";
+import validateJWT from "../middleware/validateJWT";
 
 const routerEvent = express.Router();
 
-routerEvent.get("/", getAllEvents);
+routerEvent.get("/", validateJWT, getAllEvents);
 
-routerEvent.post("/new", createNewEvent);
+routerEvent.post("/new", validateJWT, createNewEvent);
 
-routerEvent.put("/update/:id", updateNote);
+routerEvent.put("/update/:id", validateJWT, updateNote);
 
-routerEvent.delete("/delete/:id", deleteNote);
+routerEvent.delete("/delete/:id", validateJWT, deleteNote);
 
 export default routerEvent;
