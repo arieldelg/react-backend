@@ -58,7 +58,10 @@ const createNewUser = async (req: Request, res: Response) => {
     return res.status(201).json({
       ok: true,
       message: "register",
-      user: result,
+      user: {
+        _uid: result.insertedId,
+        name,
+      },
       token,
     });
   } catch (error) {
@@ -113,7 +116,10 @@ const loginUser = async (req: Request, res: Response) => {
     return res.status(200).json({
       ok: true,
       message: "status ok",
-      data: user,
+      user: {
+        name: user.name,
+        _uid: user._id,
+      },
       token,
     });
   } catch (error) {
@@ -140,6 +146,10 @@ const revalidToken = async (req: Request, res: Response) => {
     return res.status(500).json({
       ok: false,
       message: "Please contact to the admin area",
+      user: {
+        _uid: _id,
+        name,
+      },
     });
   }
 };
