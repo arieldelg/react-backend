@@ -141,15 +141,15 @@ const revalidToken = async (req: Request, res: Response) => {
       ok: true,
       message: "revalidateToken",
       token,
+      user: {
+        _uid: _id,
+        name,
+      },
     });
   } catch (error) {
     return res.status(500).json({
       ok: false,
       message: "Please contact to the admin area",
-      user: {
-        _uid: _id,
-        name,
-      },
     });
   }
 };
