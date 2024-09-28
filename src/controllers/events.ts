@@ -12,6 +12,20 @@ interface NewNote {
   endDate: Date;
 }
 
+export interface EventNote {
+  creation: {
+    createdAt: number;
+    updatedAt: number;
+  };
+  name: string;
+  text: string;
+  start: number | Date;
+  end: number | Date;
+  title: string;
+  _id: string;
+  _uid: string;
+}
+
 const getAllEvents = async (req: Request, res: Response) => {
   const { _uid, name } = req.body as { _uid: string; name: string };
 
@@ -88,11 +102,7 @@ const createNewEvent = async (req: Request, res: Response) => {
 };
 
 const updateNote = async (req: Request, res: Response) => {
-  const { _uid, name, ...data } = req.body as {
-    _uid: string;
-    data: unknown;
-    name: string;
-  };
+  const { _uid, _id, creation, start, end, ...data } = req.body as EventNote;
 
   const { id } = req.params;
 
@@ -109,6 +119,12 @@ const updateNote = async (req: Request, res: Response) => {
     const updateDoc = {
       $set: {
         ...data,
+        creation: {
+          ...creation,
+          updatedAt: new Date().getTime,
+        },
+        start: new Date(start).getTime(),
+        end: new Date(end).getTime(),
       },
     };
     const result = await updateNote.updateOne(filter, updateDoc);
