@@ -54,8 +54,8 @@ const createNewEvent = async (req: Request, res: Response) => {
       updatedAt: new Date().getTime(),
     },
     timeNote: {
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      startDate: startDate,
+      endDate: endDate,
     },
   };
 
