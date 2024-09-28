@@ -23,6 +23,9 @@ const getAllEvents = async (req: Request, res: Response) => {
 
   try {
     const note = connectMongo("calendar", "notes");
+    // const options = {
+    //   projection: { user: { _id: 1, name: 1 }, text: 1, title: 1, timeNote: 1 },
+    // };
     const result = await note.find({ _uid }).toArray();
 
     result.map((element) => {
@@ -53,10 +56,8 @@ const createNewEvent = async (req: Request, res: Response) => {
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
     },
-    timeNote: {
-      startDate: startDate,
-      endDate: endDate,
-    },
+    start: startDate,
+    end: endDate,
   };
 
   if (!_uid)
