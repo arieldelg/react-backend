@@ -30,6 +30,7 @@ const getAllEvents = async (req: Request, res: Response) => {
 
     result.map((element) => {
       element.name = name;
+
       return element;
     });
 
