@@ -44,15 +44,14 @@ const getAllEvents = async (req: Request, res: Response) => {
 };
 
 const createNewEvent = async (req: Request, res: Response) => {
-  const { _uid, text, title, createdAt, updatedAt, startDate, endDate } =
-    req.body as NewNote;
+  const { _uid, text, title, startDate, endDate } = req.body as NewNote;
   const data = {
     _uid,
     text,
     title,
     creation: {
-      createdAt: new Date(createdAt),
-      updatedAt: new Date(updatedAt),
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
     },
     timeNote: {
       startDate: new Date(startDate),

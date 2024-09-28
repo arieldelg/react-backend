@@ -133,16 +133,15 @@ const loginUser = async (req: Request, res: Response) => {
 };
 
 const revalidToken = async (req: Request, res: Response) => {
-  const { _id, name } = req.body as { _id: string; name: string };
-
+  const { _uid, name } = req.body as { _uid: string; name: string };
   try {
-    const token = await generateJWT(_id, name);
+    const token = await generateJWT(_uid, name);
     return res.json({
       ok: true,
       message: "revalidateToken",
       token,
       user: {
-        _uid: _id,
+        _uid,
         name,
       },
     });

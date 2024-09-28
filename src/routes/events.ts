@@ -26,8 +26,6 @@ routerEvent.post(
     check("title", "Title is required").notEmpty(),
     check("endDate", "End Date is required").custom(isDate),
     check("startDate", "startDate is required").custom(isDate),
-    check("createdAt", "createdAt is required").custom(isDate),
-    check("updatedAt", "updatedAt is required").custom(isDate),
     validateFields,
   ],
   createNewEvent
