@@ -120,7 +120,7 @@ const updateNote = async (req: Request, res: Response) => {
         ...data,
         creation: {
           ...creation,
-          updatedAt: new Date().getTime,
+          updatedAt: new Date().getTime(),
         },
         start: new Date(start).getTime(),
         end: new Date(end).getTime(),
