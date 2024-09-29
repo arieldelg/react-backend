@@ -2,14 +2,12 @@ import { Response, Request } from "express";
 import { ObjectId } from "mongodb";
 import { connectMongo } from "../helpers/connectMongo";
 
-interface NewNote {
-  _uid: string;
-  title: string;
+export interface NewFormValuesNote {
+  end: Date;
   text: string;
-  createdAt: Date;
-  updatedAt: Date;
-  startDate: Date;
-  endDate: Date;
+  start: Date;
+  title: string;
+  _uid: string
 }
 
 export interface EventNote {
@@ -62,7 +60,8 @@ const getAllEvents = async (req: Request, res: Response) => {
 };
 
 const createNewEvent = async (req: Request, res: Response) => {
-  const { _uid, text, title, startDate, endDate } = req.body as NewNote;
+  console.log(req.body, 'createNewEvent')
+  const { _uid, text, title, start, end } = req.body as NewFormValuesNote;
   const data = {
     _uid,
     text,
@@ -71,8 +70,8 @@ const createNewEvent = async (req: Request, res: Response) => {
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
     },
-    start: startDate,
-    end: endDate,
+    start,
+    end,
   };
 
   if (!_uid)
