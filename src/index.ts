@@ -6,8 +6,14 @@ import routerAuth from "./routes/auth";
 import { run } from "./db/mongoDB";
 import routerEvent from "./routes/events";
 import path from "path";
-dotenv.config();
+import { fileURLToPath } from "url";
+import.meta.url;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+console.log(__dirname);
+
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
