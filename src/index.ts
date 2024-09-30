@@ -24,6 +24,7 @@ app.use(cors());
 run();
 
 //Directorio Publico
+
 app.use(express.static("src/public"));
 
 //Rutas
