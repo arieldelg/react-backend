@@ -27,6 +27,7 @@ app.use("/api/auth", routerAuth);
 app.use("/api/calendarEvents", routerEvent);
 
 app.use("*", (_, res) => {
+  const __dirname = path.resolve();
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
