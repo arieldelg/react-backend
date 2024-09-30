@@ -28,6 +28,7 @@ app.use("/api/calendarEvents", routerEvent);
 
 app.use("*", (_, res) => {
   const __dirname = path.resolve();
+
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
@@ -36,5 +37,3 @@ app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
   console.log("hola");
 });
-
-console.log("hola mundo ariel");
