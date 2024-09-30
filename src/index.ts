@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import routerAuth from "./routes/auth";
 import { run } from "./db/mongoDB";
 import routerEvent from "./routes/events";
+import path from "path";
 dotenv.config();
 
 const app = express();
@@ -23,6 +24,10 @@ app.use(express.static("src/public"));
 //Rutas
 app.use("/api/auth", routerAuth);
 app.use("/api/calendarEvents", routerEvent);
+
+app.use("*", (_, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
 
 //listening Port
 app.listen(PORT, () => {
